@@ -38,10 +38,14 @@ public class DynamoDBClientTest {
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
         ), collectionTemplateVersion2 = new CollectionTemplateVersion(
                 collectionTemplate.getId(), 1, 3000L, 3500L, "user_1",
+                CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
+        ), collectionTemplateVersion3 = new CollectionTemplateVersion(
+                collectionTemplate.getId(), 2, 4000L, 7000L, "user_1",
                 CollectionTemplateVersion.CollectionTemplateVersionState.DRAFT
         );
 
         this.client.createEntity(collectionTemplateVersion1);
         this.client.createEntity(collectionTemplateVersion2);
+        this.client.createEntity(collectionTemplateVersion3);
     }
 }
