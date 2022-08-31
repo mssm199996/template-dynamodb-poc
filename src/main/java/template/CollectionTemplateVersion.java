@@ -25,7 +25,10 @@ public class CollectionTemplateVersion {
 
     @DynamoDBRangeKey(attributeName = "sortKey")
     public String getSortKey() {
-        return this.state + "-" + this.revision;
+        return switch (state) {
+            case DRAFT -> state.name();
+            case PUBLISHED -> this.state + "-" + this.revision;
+        };
     }
 
     public enum CollectionTemplateVersionState {
