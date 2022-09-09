@@ -8,9 +8,13 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import template.CollectionTemplate;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DynamoDBClient {
 
@@ -20,6 +24,15 @@ public class DynamoDBClient {
     public DynamoDBClient() {
         this.client = this.createAsyncClient();
         this.mapper = new DynamoDBMapper(client);
+
+        Map<String, AttributeValue> eav = new HashMap<>();
+        eav.put(":val1", new AttributeValue().withS("partitionKey"));
+        eav.put(":val2", new AttributeValue().withS("twoWeeksAgoStr.toString()"));
+
+        DynamoDBQueryExpression<Object> queryExpression = new DynamoDBQueryExpression<Object>()
+                .withKeyConditionExpression("Id = :val1 and ReplyDateTime > :val2").withExpressionAttributeValues(eav)
+                .withScanIndexForward(false);
+
     }
 
     public static final String ACCESS_KEY_ID = "local";
