@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import template.attribute.Attribute;
 
 @Getter
 @AllArgsConstructor
@@ -19,6 +20,9 @@ public class CollectionTemplateVersion {
     private Integer revision;
     private Long createdAt, publishedAt;
     private String modifiedBy;
+
+    private Attribute<String> title;
+    private Attribute<Boolean> async;
 
     @DynamoDBTypeConvertedEnum
     private CollectionTemplateVersionState state;

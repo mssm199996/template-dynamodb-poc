@@ -3,8 +3,8 @@ package dynamodb;
 import org.junit.Test;
 import template.CollectionTemplate;
 import template.CollectionTemplateVersion;
-import template.rules.DisabilityRestrictionBasedInheritanceRule;
-import template.rules.ValueRestrictionInheritanceRule;
+import template.attribute.Attribute;
+import template.attribute.AttributeType;
 
 import java.util.Set;
 
@@ -24,19 +24,19 @@ public class DynamoDBClientTest {
                 "template-1",
                 "Template 1",
                 "dplus",
-                Set.of(),
-                Set.of(
-                        new DisabilityRestrictionBasedInheritanceRule("title", true),
-                        new ValueRestrictionInheritanceRule("template", Set.of("page", "epg"))
-                )
+                "sport",
+                Set.of()
         );
 
         this.client.createEntity(collectionTemplate);
 
         CollectionTemplateVersion collectionTemplateVersion1 = new CollectionTemplateVersion(
                 collectionTemplate.getId(), 0, 1000L, 2000L, "user_1",
+                Attribute.builder().type(AttributeType.BOOLEAN).value(false).build(),
+                Attribute.builder().type(AttributeType.STRING).value(false).build(),
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
-        ), collectionTemplateVersion2 = new CollectionTemplateVersion(
+
+                ), collectionTemplateVersion2 = new CollectionTemplateVersion(
                 collectionTemplate.getId(), 1, 3000L, 3500L, "user_1",
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
         ), collectionTemplateVersion3 = new CollectionTemplateVersion(
