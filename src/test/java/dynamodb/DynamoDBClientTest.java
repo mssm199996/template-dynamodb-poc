@@ -34,7 +34,7 @@ public class DynamoDBClientTest {
         String templateId = UUID.randomUUID().toString();
 
         CollectionTemplateVersion collectionTemplateVersion1 = new CollectionTemplateVersion(
-                templateId, 0, 1000L, 2000L, "user_1",
+                templateId, "0",0, 1000L, 2000L, "user_1",
                 Attribute
                         .<String>builder()
                         .type(AttributeType.STRING)
@@ -56,7 +56,7 @@ public class DynamoDBClientTest {
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
 
         ), collectionTemplateVersion2 = new CollectionTemplateVersion(
-                templateId, 1, 3000L, 3500L, "user_1",
+                templateId, "1", 1, 3000L, 3500L, "user_1",
                 Attribute
                         .<String>builder()
                         .type(AttributeType.STRING)
@@ -81,7 +81,7 @@ public class DynamoDBClientTest {
                         .build(),
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
         ), collectionTemplateVersion3 = new CollectionTemplateVersion(
-                templateId, 2, 4000L, 7000L, "user_1",
+                templateId, "DRAFT", 2, 4000L, 7000L, "user_1",
                 Attribute
                         .<String>builder()
                         .type(AttributeType.STRING)
@@ -115,9 +115,7 @@ public class DynamoDBClientTest {
 
         //List<CollectionTemplateVersion> collectionTemplateVersionList = this.client.findAllByPartitionKey(CollectionTemplateVersion.class, templateId);
 
-
-        CollectionTemplateVersion readCollectionTemplateVersion1 = this.client.findByPartitionKeyAndSortKey(CollectionTemplateVersion.class, collectionTemplateVersion1.getTemplateId(), collectionTemplateVersion1.getSortKey());
-
-        System.out.println(readCollectionTemplateVersion1);
+        System.out.println(this.client.findByPartitionKeyAndSortKey(CollectionTemplateVersion.class,
+                templateId, collectionTemplateVersion3.getSortKey()));
     }
 }
