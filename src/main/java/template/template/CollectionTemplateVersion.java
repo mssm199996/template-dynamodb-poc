@@ -27,7 +27,7 @@ public class CollectionTemplateVersion {
     private String modifiedBy;
 
     private Attribute<String> title;
-    //private Attribute<Boolean> async;
+    private Attribute<Boolean> async;
 
     @DynamoDBTypeConvertedEnum
     private CollectionTemplateVersionState state;

@@ -48,7 +48,7 @@ public class DynamoDBClientTest {
                                 .build()
                         )
                         .build(),
-                //null,
+                Attribute.<Boolean>builder().type(AttributeType.BOOLEAN).value(false).build(),
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
 
         ), collectionTemplateVersion2 = new CollectionTemplateVersion(
@@ -70,7 +70,11 @@ public class DynamoDBClientTest {
                                 .build()
                         )
                         .build(),
-                //Attribute.<Boolean>builder().type(AttributeType.BOOLEAN).value(false).build(),
+                Attribute
+                        .<Boolean>builder()
+                        .type(AttributeType.BOOLEAN)
+                        .value(true)
+                        .build(),
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
         ), collectionTemplateVersion3 = new CollectionTemplateVersion(
                 templateId, 2, 4000L, 7000L, "user_1",
@@ -91,7 +95,11 @@ public class DynamoDBClientTest {
                                 .build()
                         )
                         .build(),
-                //Attribute.<Boolean>builder().type(AttributeType.BOOLEAN).value(false).build(),
+                Attribute
+                        .<Boolean>builder()
+                        .type(AttributeType.BOOLEAN)
+                        .value(false)
+                        .build(),
                 CollectionTemplateVersion.CollectionTemplateVersionState.DRAFT
         );
 
