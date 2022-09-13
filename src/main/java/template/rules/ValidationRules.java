@@ -19,6 +19,5 @@ public class ValidationRules<T> {
     private Boolean required;
     private Boolean overridable;
 
-    @DynamoDBIgnore
     private Set<T> allowedValues;
 }
