@@ -65,11 +65,11 @@ public class DynamoDBClient {
     }
 
     public <T> List<T> findAllByPartitionKey(Class<T> type, String partitionKey) {
-        Map<String, AttributeValue> params = new HashMap<String, AttributeValue>();
+        Map<String, AttributeValue> params = new HashMap<>();
         params.put(":partitionKey", new AttributeValue().withS(partitionKey));
 
         DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
-                .withKeyConditionExpression("partitionKey = :templateId")
+                .withKeyConditionExpression("partitionKey = :partitionKey")
                 .withExpressionAttributeValues(params);
 
         return this.mapper.query(type, queryExpression);

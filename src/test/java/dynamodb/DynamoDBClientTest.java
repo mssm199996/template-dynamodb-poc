@@ -1,6 +1,7 @@
 package dynamodb;
 
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import template.attribute.Attribute;
 import template.attribute.AttributeType;
 import template.rules.UIRules;
@@ -8,6 +9,8 @@ import template.rules.ValidationRules;
 import template.template.CollectionTemplateVersion;
 import template.template.CollectionTemplateVersionDefinition;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -34,7 +37,7 @@ public class DynamoDBClientTest {
         String templateId = UUID.randomUUID().toString();
 
         CollectionTemplateVersion collectionTemplateVersion1 = new CollectionTemplateVersion(
-                templateId, "0",0, 1000L, 2000L, "user_1",
+                templateId, "0", 0, 1000L, 2000L, "user_1",
                 Attribute
                         .<String>builder()
                         .type(AttributeType.STRING)
@@ -113,9 +116,18 @@ public class DynamoDBClientTest {
 
         // --->
 
-        //List<CollectionTemplateVersion> collectionTemplateVersionList = this.client.findAllByPartitionKey(CollectionTemplateVersion.class, templateId);
+        List<CollectionTemplateVersion> actualCollectionTemplateVersionList = this.client.findAllByPartitionKey(CollectionTemplateVersion.class, templateId);
+        List<CollectionTemplateVersion> expectedCollectionTemplateVersionList = new ArrayList<>(List.of(new CollectionTemplateVersion[] {
+                collectionTemplateVersion1,
+                collectionTemplateVersion2,
+                collectionTemplateVersion3
+        }));
+        expectedCollectionTemplateVersionList.sort(Comparator.comparing(CollectionTemplateVersion::getSortKey));
 
-        System.out.println(this.client.findByPartitionKeyAndSortKey(CollectionTemplateVersion.class,
-                templateId, collectionTemplateVersion3.getSortKey()));
+        Assertions.assertIterableEquals(expectedCollectionTemplateVersionList, actualCollectionTemplateVersionList);
+
+        CollectionTemplateVersion collectionTemplateVersion1Bis = this.client.findByPartitionKeyAndSortKey(CollectionTemplateVersion.class, collectionTemplateVersion1.getTemplateId(), collectionTemplateVersion1.getSortKey());
+
+        Assertions.assertEquals(collectionTemplateVersion1, collectionTemplateVersion1Bis);
     }
 }
