@@ -20,9 +20,7 @@ public class Attribute<T> {
     @DynamoDBTypeConvertedEnum
     private AttributeType type;
 
-    @DynamoDBIgnore
     private ValidationRules<T> validationRules;
 
-    @DynamoDBIgnore
     private UIRules uiRules;
 }

@@ -11,6 +11,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
+import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 
 import java.util.HashMap;
@@ -46,6 +47,12 @@ public class DynamoDBClient {
         createTableRequest.setProvisionedThroughput(new ProvisionedThroughput(25L, 25L));
 
         this.client.createTable(createTableRequest);
+    }
+
+    public <T> void deleteTable(Class<T> type) {
+        DeleteTableRequest deleteTableRequest = this.mapper.generateDeleteTableRequest(type);
+
+        this.client.deleteTable(deleteTableRequest);
     }
 
     public <T> void createEntity(T entity) {
