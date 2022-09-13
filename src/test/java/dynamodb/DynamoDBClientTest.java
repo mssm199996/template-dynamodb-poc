@@ -8,12 +8,13 @@ import template.rules.ValidationRules;
 import template.template.CollectionTemplateVersion;
 import template.template.CollectionTemplateVersionDefinition;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 public class DynamoDBClientTest {
 
-    private DynamoDBClient client = new DynamoDBClient();
+    private final DynamoDBClient client = new DynamoDBClient();
 
     @Test
     public void createTable() {
@@ -27,6 +28,9 @@ public class DynamoDBClientTest {
 
     @Test
     public void saveCollectionTemplate() {
+        this.deleteTable();
+        this.createTable();
+
         String templateId = UUID.randomUUID().toString();
 
         CollectionTemplateVersion collectionTemplateVersion1 = new CollectionTemplateVersion(
@@ -106,5 +110,14 @@ public class DynamoDBClientTest {
         this.client.createEntity(collectionTemplateVersion1);
         this.client.createEntity(collectionTemplateVersion2);
         this.client.createEntity(collectionTemplateVersion3);
+
+        // --->
+
+        //List<CollectionTemplateVersion> collectionTemplateVersionList = this.client.findAllByPartitionKey(CollectionTemplateVersion.class, templateId);
+
+
+        CollectionTemplateVersion readCollectionTemplateVersion1 = this.client.findByPartitionKeyAndSortKey(CollectionTemplateVersion.class, collectionTemplateVersion1.getTemplateId(), collectionTemplateVersion1.getSortKey());
+
+        System.out.println(readCollectionTemplateVersion1);
     }
 }

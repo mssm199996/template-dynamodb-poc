@@ -15,6 +15,7 @@ import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DynamoDBClient {
@@ -57,6 +58,21 @@ public class DynamoDBClient {
 
     public <T> void createEntity(T entity) {
         this.mapper.save(entity);
+    }
+
+    public <T> T findByPartitionKeyAndSortKey(Class<T> type, String partitionKey, String sortKey) {
+        return this.mapper.load(type, partitionKey, sortKey);
+    }
+
+    public <T> List<T> findAllByPartitionKey(Class<T> type, String partitionKey) {
+        Map<String, AttributeValue> params = new HashMap<String, AttributeValue>();
+        params.put(":partitionKey", new AttributeValue().withS(partitionKey));
+
+        DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
+                .withKeyConditionExpression("partitionKey = :templateId")
+                .withExpressionAttributeValues(params);
+
+        return this.mapper.query(type, queryExpression);
     }
 
     private AmazonDynamoDB createAsyncClient() {
