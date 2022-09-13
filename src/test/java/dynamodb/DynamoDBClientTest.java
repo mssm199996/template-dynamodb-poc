@@ -3,8 +3,6 @@ package dynamodb;
 import org.junit.Test;
 import template.CollectionTemplate;
 import template.CollectionTemplateVersion;
-import template.attribute.Attribute;
-import template.attribute.AttributeType;
 
 import java.util.Set;
 
@@ -32,20 +30,24 @@ public class DynamoDBClientTest {
 
         CollectionTemplateVersion collectionTemplateVersion1 = new CollectionTemplateVersion(
                 collectionTemplate.getId(), 0, 1000L, 2000L, "user_1",
-                Attribute.builder().type(AttributeType.BOOLEAN).value(false).build(),
-                Attribute.builder().type(AttributeType.STRING).value(false).build(),
+                //null,
+                //null,
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
 
-                ), collectionTemplateVersion2 = new CollectionTemplateVersion(
+        ), collectionTemplateVersion2 = new CollectionTemplateVersion(
                 collectionTemplate.getId(), 1, 3000L, 3500L, "user_1",
+                //Attribute.<String>builder().type(AttributeType.STRING).value("Collection Template V2").build(),
+                //Attribute.<Boolean>builder().type(AttributeType.BOOLEAN).value(false).build(),
                 CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
         ), collectionTemplateVersion3 = new CollectionTemplateVersion(
                 collectionTemplate.getId(), 2, 4000L, 7000L, "user_1",
+                //Attribute.<String>builder().type(AttributeType.STRING).value("Collection Template V3").build(),
+                //Attribute.<Boolean>builder().type(AttributeType.BOOLEAN).value(false).build(),
                 CollectionTemplateVersion.CollectionTemplateVersionState.DRAFT
         );
 
         this.client.createEntity(collectionTemplateVersion1);
-        this.client.createEntity(collectionTemplateVersion2);
-        this.client.createEntity(collectionTemplateVersion3);
+        //this.client.createEntity(collectionTemplateVersion2);
+        //this.client.createEntity(collectionTemplateVersion3);
     }
 }

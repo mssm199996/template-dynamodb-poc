@@ -1,13 +1,18 @@
 package template.rules;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Builder
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @DynamoDBDocument
 public class ArrayValidationRules<T> extends ValidationRules<T> {
 

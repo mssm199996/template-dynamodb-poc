@@ -1,11 +1,13 @@
 package template.rules;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @DynamoDBDocument
 public class RangeValidationRules extends ValidationRules<Number> {
 
