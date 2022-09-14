@@ -1,14 +1,16 @@
 package template.rules;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
+import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
 
 import java.util.List;
 
 @Getter
 @Builder
-@DynamoDBDocument
+@ToString
+@DynamoDbImmutable(builder = ArrayValidationRules.ArrayValidationRulesBuilder.class)
 public class ArrayValidationRules<T> {
 
     private Integer minSize, maxSize;

@@ -1,87 +1,71 @@
 package dynamodb;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteTableRequest;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Expression;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryEnhancedRequest;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import template.template.CollectionTemplateVersion;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DynamoDBClient {
-
-    private AmazonDynamoDB client;
-    private DynamoDBMapper mapper;
-
-    public DynamoDBClient() {
-        this.client = this.createAsyncClient();
-        this.mapper = new DynamoDBMapper(client);
-
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":val1", new AttributeValue().withS("partitionKey"));
-        eav.put(":val2", new AttributeValue().withS("twoWeeksAgoStr.toString()"));
-
-        DynamoDBQueryExpression<Object> queryExpression = new DynamoDBQueryExpression<Object>()
-                .withKeyConditionExpression("Id = :val1 and ReplyDateTime > :val2").withExpressionAttributeValues(eav)
-                .withScanIndexForward(false);
-
-    }
 
     public static final String ACCESS_KEY_ID = "local";
     public static final String SECRET_ACCESS_KEY = "local";
 
     public static final String DYNAMODB_URL = "http://localhost:8000";
-    public static final Region REGION = Region.getRegion(Regions.US_WEST_2);
+    public static final Region REGION = Region.EU_WEST_1;
 
-    public <T> void createTable(Class<T> type) {
-        CreateTableRequest createTableRequest = this.mapper.generateCreateTableRequest(type);
-        createTableRequest.setProvisionedThroughput(new ProvisionedThroughput(25L, 25L));
+    // --->
 
-        this.client.createTable(createTableRequest);
+    private static String COLLECTION_TEMPLATE_TABLE_NAME = "CollectionTemplate";
+
+    private DynamoDbEnhancedClient dynamoDbEnhancedClient;
+    private TableSchema<CollectionTemplateVersion> collectionTemplateVersionTableSchema;
+    private DynamoDbTable<CollectionTemplateVersion> collectionTemplateVersionDynamoDbTable;
+
+    public DynamoDBClient() {
+        this.dynamoDbEnhancedClient = DynamoDbEnhancedClient.create();
+
+        this.collectionTemplateVersionTableSchema = TableSchema.fromImmutableClass(CollectionTemplateVersion.class);
+        this.collectionTemplateVersionDynamoDbTable = this.dynamoDbEnhancedClient.table(COLLECTION_TEMPLATE_TABLE_NAME, collectionTemplateVersionTableSchema);
     }
 
-    public <T> void deleteTable(Class<T> type) {
-        DeleteTableRequest deleteTableRequest = this.mapper.generateDeleteTableRequest(type);
-
-        this.client.deleteTable(deleteTableRequest);
+    public void createTable() {
+        this.collectionTemplateVersionDynamoDbTable.createTable();
     }
 
-    public <T> void createEntity(T entity) {
-        this.mapper.save(entity);
+    public void deleteTable() {
+        this.collectionTemplateVersionDynamoDbTable.deleteTable();
     }
 
-    public <T> T findByPartitionKeyAndSortKey(Class<T> type, String partitionKey, String sortKey) {
-        return this.mapper.load(type, partitionKey, sortKey);
+    public void createEntity(CollectionTemplateVersion entity) {
+        this.collectionTemplateVersionDynamoDbTable.putItem(entity);
     }
 
-    public <T> List<T> findAllByPartitionKey(Class<T> type, String partitionKey) {
-        Map<String, AttributeValue> params = new HashMap<>();
-        params.put(":partitionKey", new AttributeValue().withS(partitionKey));
-
-        DynamoDBQueryExpression<T> queryExpression = new DynamoDBQueryExpression<T>()
-                .withKeyConditionExpression("partitionKey = :partitionKey")
-                .withExpressionAttributeValues(params);
-
-        return this.mapper.query(type, queryExpression);
+    public CollectionTemplateVersion findByPartitionKeyAndSortKey(String partitionKey, String sortKey) {
+        return this.collectionTemplateVersionDynamoDbTable.getItem(Key.builder()
+                .partitionValue(partitionKey)
+                .sortValue(sortKey)
+                .build()
+        );
     }
 
-    private AmazonDynamoDB createAsyncClient() {
-        AmazonDynamoDB client = AmazonDynamoDBClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(ACCESS_KEY_ID, SECRET_ACCESS_KEY)))
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(DYNAMODB_URL, REGION.getName()))
+    public PageIterable<CollectionTemplateVersion> findAllByPartitionKey(String partitionKey) {
+        QueryEnhancedRequest queryEnhancedRequest = QueryEnhancedRequest.builder()
+                .filterExpression(Expression.builder()
+                        .expression("partitionKey = :partitionKey")
+                        .putExpressionValue("partitionKey", AttributeValue.builder()
+                                .s(partitionKey)
+                                .build())
+                        .build())
                 .build();
 
-        return client;
+        return this.collectionTemplateVersionDynamoDbTable.query(queryEnhancedRequest);
     }
-
 }

@@ -2,12 +2,12 @@ package dynamodb;
 
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import software.amazon.awssdk.enhanced.dynamodb.model.PageIterable;
 import template.attribute.Attribute;
 import template.attribute.AttributeType;
 import template.rules.UIRules;
 import template.rules.ValidationRules;
 import template.template.CollectionTemplateVersion;
-import template.template.CollectionTemplateVersionDefinition;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,12 +21,12 @@ public class DynamoDBClientTest {
 
     @Test
     public void createTable() {
-        this.client.createTable(CollectionTemplateVersionDefinition.class);
+        this.client.createTable();
     }
 
     @Test
     public void deleteTable() {
-        this.client.deleteTable(CollectionTemplateVersionDefinition.class);
+        this.client.deleteTable();
     }
 
     @Test
@@ -36,10 +36,13 @@ public class DynamoDBClientTest {
 
         String templateId = UUID.randomUUID().toString();
 
-        CollectionTemplateVersion collectionTemplateVersion1 = new CollectionTemplateVersion(
-                templateId, "0", 0, 1000L, 2000L, "user_1",
-                Attribute
-                        .<String>builder()
+        CollectionTemplateVersion collectionTemplateVersion1 = CollectionTemplateVersion.builder()
+                .templateId(templateId)
+                .revision(0)
+                .createdAt(1000L)
+                .publishedAt(2000L)
+                .modifiedBy("user_1")
+                .title(Attribute.<String>builder()
                         .type(AttributeType.STRING)
                         .value("Collection Template V1")
                         .uiRules(UIRules
@@ -54,61 +57,77 @@ public class DynamoDBClientTest {
                                 .allowedValues(Set.of("V1", "V3"))
                                 .build()
                         )
-                        .build(),
-                Attribute.<Boolean>builder().type(AttributeType.BOOLEAN).value(false).build(),
-                CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
-
-        ), collectionTemplateVersion2 = new CollectionTemplateVersion(
-                templateId, "1", 1, 3000L, 3500L, "user_1",
-                Attribute
-                        .<String>builder()
-                        .type(AttributeType.STRING)
-                        .value("Collection Template V2")
-                        .uiRules(UIRules
-                                .builder()
-                                .hidden(true)
-                                .build()
-                        )
-                        .validationRules(ValidationRules
-                                .<String>builder()
-                                .required(true)
-                                .overridable(false)
-                                .allowedValues(Set.of("V1", "V2", "V3"))
-                                .build()
-                        )
-                        .build(),
-                Attribute
-                        .<Boolean>builder()
-                        .type(AttributeType.BOOLEAN)
-                        .value(true)
-                        .build(),
-                CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED
-        ), collectionTemplateVersion3 = new CollectionTemplateVersion(
-                templateId, "DRAFT", 2, 4000L, 7000L, "user_1",
-                Attribute
-                        .<String>builder()
-                        .type(AttributeType.STRING)
-                        .value("Collection Template V3")
-                        .uiRules(UIRules
-                                .builder()
-                                .hidden(true)
-                                .build()
-                        )
-                        .validationRules(ValidationRules
-                                .<String>builder()
-                                .required(true)
-                                .overridable(false)
-                                .allowedValues(Set.of("V1", "V2", "V3", "V4"))
-                                .build()
-                        )
-                        .build(),
-                Attribute
-                        .<Boolean>builder()
+                        .build()
+                )
+                .async(Attribute.<Boolean>builder()
                         .type(AttributeType.BOOLEAN)
                         .value(false)
+                        .build()
+                )
+                .state(CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED)
+                .build(),
+
+                collectionTemplateVersion2 = CollectionTemplateVersion.builder()
+                        .templateId(templateId)
+                        .revision(1)
+                        .createdAt(3000L)
+                        .publishedAt(3500L)
+                        .modifiedBy("user_1")
+                        .title(Attribute.<String>builder()
+                                .type(AttributeType.STRING)
+                                .value("Collection Template V2")
+                                .uiRules(UIRules
+                                        .builder()
+                                        .hidden(false)
+                                        .build()
+                                )
+                                .validationRules(ValidationRules.<String>
+                                                builder()
+                                        .required(true)
+                                        .overridable(false)
+                                        .allowedValues(Set.of("V1", "V2", "V3"))
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .async(Attribute.<Boolean>builder()
+                                .type(AttributeType.BOOLEAN)
+                                .value(true)
+                                .build()
+                        )
+                        .state(CollectionTemplateVersion.CollectionTemplateVersionState.PUBLISHED)
                         .build(),
-                CollectionTemplateVersion.CollectionTemplateVersionState.DRAFT
-        );
+
+                collectionTemplateVersion3 = CollectionTemplateVersion.builder()
+                        .templateId(templateId)
+                        .revision(2)
+                        .createdAt(4000L)
+                        .publishedAt(7000L)
+                        .modifiedBy("user_1")
+                        .title(Attribute.<String>builder()
+                                .type(AttributeType.STRING)
+                                .value("Collection Template V3")
+                                .uiRules(UIRules
+                                        .builder()
+                                        .hidden(true)
+                                        .build()
+                                )
+                                .validationRules(ValidationRules.<String>
+                                                builder()
+                                        .required(true)
+                                        .overridable(false)
+                                        .allowedValues(Set.of("V1", "V2", "V3", "V4"))
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .async(Attribute.<Boolean>builder()
+                                .type(AttributeType.BOOLEAN)
+                                .value(false)
+                                .build()
+                        )
+                        .state(CollectionTemplateVersion.CollectionTemplateVersionState.DRAFT)
+                        .build();
 
         this.client.createEntity(collectionTemplateVersion1);
         this.client.createEntity(collectionTemplateVersion2);
@@ -116,7 +135,7 @@ public class DynamoDBClientTest {
 
         // --->
 
-        List<CollectionTemplateVersion> actualCollectionTemplateVersionList = this.client.findAllByPartitionKey(CollectionTemplateVersion.class, templateId);
+        PageIterable<CollectionTemplateVersion> actualCollectionTemplateVersionList = this.client.findAllByPartitionKey(templateId);
         List<CollectionTemplateVersion> expectedCollectionTemplateVersionList = new ArrayList<>(List.of(new CollectionTemplateVersion[] {
                 collectionTemplateVersion1,
                 collectionTemplateVersion2,
@@ -126,7 +145,7 @@ public class DynamoDBClientTest {
 
         Assertions.assertIterableEquals(expectedCollectionTemplateVersionList, actualCollectionTemplateVersionList);
 
-        CollectionTemplateVersion collectionTemplateVersion1Bis = this.client.findByPartitionKeyAndSortKey(CollectionTemplateVersion.class, collectionTemplateVersion1.getTemplateId(), collectionTemplateVersion1.getSortKey());
+        CollectionTemplateVersion collectionTemplateVersion1Bis = this.client.findByPartitionKeyAndSortKey(collectionTemplateVersion1.getTemplateId(), collectionTemplateVersion1.getSortKey());
 
         Assertions.assertEquals(collectionTemplateVersion1, collectionTemplateVersion1Bis);
     }
