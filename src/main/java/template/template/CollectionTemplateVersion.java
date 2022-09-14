@@ -11,13 +11,16 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 import template.attribute.Attribute;
 
 @Getter
-@Builder(access = AccessLevel.PUBLIC)
+@Builder
 @ToString
 @DynamoDbImmutable(builder = CollectionTemplateVersion.CollectionTemplateVersionBuilder.class)
 public class CollectionTemplateVersion {
 
     @Getter(onMethod = @__({ @DynamoDbPartitionKey, @DynamoDbAttribute("partitionKey") }))
     private String templateId;
+
+    @Getter(onMethod = @__({ @DynamoDbSortKey, @DynamoDbAttribute("sortKey") }))
+    private String sortKey;
 
     private Integer revision;
     private Long createdAt, publishedAt;
@@ -28,17 +31,16 @@ public class CollectionTemplateVersion {
 
     private CollectionTemplateVersionState state;
 
-    @DynamoDbSortKey
-    @DynamoDbAttribute("sortKey")
-    public String getSortKey() {
-        return switch (state) {
-            case DRAFT -> CollectionTemplateVersionState.DRAFT.name();
-            case PUBLISHED -> Integer.toString(revision);
-        };
-    }
-
     public enum CollectionTemplateVersionState {
         PUBLISHED,
         DRAFT
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(!(o instanceof CollectionTemplateVersion))
+            return false;
+
+        return this.templateId.equals(((CollectionTemplateVersion) o).getTemplateId()) && this.sortKey.equals(((CollectionTemplateVersion) o).getSortKey());
     }
 }
