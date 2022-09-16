@@ -1,6 +1,5 @@
 package template.template;
 
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -8,7 +7,9 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortKey;
-import template.attribute.Attribute;
+import template.attribute.base.BooleanAttribute;
+import template.attribute.base.StringAttribute;
+import template.attribute.document.autodata.AutodataAttribute;
 
 @Getter
 @Builder
@@ -26,8 +27,9 @@ public class CollectionTemplateVersion {
     private Long createdAt, publishedAt;
     private String modifiedBy;
 
-    private Attribute<String> title;
-    private Attribute<Boolean> async;
+    private StringAttribute title, kind;
+    private BooleanAttribute broadcastTitle, shouldRefreshOnPageReappearance, async;
+    private AutodataAttribute autodata;
 
     private CollectionTemplateVersionState state;
 

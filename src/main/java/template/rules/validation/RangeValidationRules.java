@@ -1,16 +1,15 @@
-package template.rules;
+package template.rules.validation;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
-import template.attribute.Attribute;
 
 @Getter
 @Builder
 @ToString
-@DynamoDbImmutable(builder = UIRules.UIRulesBuilder.class)
-public class UIRules {
+@DynamoDbImmutable(builder = RangeValidationRules.RangeValidationRulesBuilder.class)
+public class RangeValidationRules {
 
-    private Boolean hidden;
+    private Integer min, max;
 }

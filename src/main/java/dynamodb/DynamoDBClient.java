@@ -27,7 +27,7 @@ public class DynamoDBClient {
 
     // --->
 
-    private static String COLLECTION_TEMPLATE_TABLE_NAME = "CollectionTemplate2";
+    private static String COLLECTION_TEMPLATE_TABLE_NAME = "CollectionTemplate";
 
     private DynamoDbEnhancedClient dynamoDbEnhancedClient;
     private TableSchema<CollectionTemplateVersion> collectionTemplateVersionTableSchema;
