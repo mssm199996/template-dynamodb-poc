@@ -1,4 +1,4 @@
-package template.rules;
+package template.rules.enums;
 
 public enum ContentType {
 

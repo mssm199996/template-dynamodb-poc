@@ -7,6 +7,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttri
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
 import template.attribute.base.BooleanAttribute;
 import template.attribute.base.IntegerAttribute;
+import template.attribute.base.StringAttribute;
 import template.attribute.base.StringSetAttribute;
 import template.attribute.document.DocumentAttribute;
 
@@ -19,11 +20,14 @@ public class EventDataAttribute extends DocumentAttribute {
     @Getter(onMethod = @__({ @DynamoDbAttribute("filter[videoType]") }))
     private StringSetAttribute videoTypeFilter;
 
-    private BooleanAttribute suggestNextEpisodeForCompleted;
-
     @Getter(onMethod = @__({ @DynamoDbAttribute("filter[viewingHistory.viewed]") }))
-    private BooleanAttribute viewingHistoryViewed;
+    private BooleanAttribute viewingHistoryViewedFilter;
+
+    @Getter(onMethod = @__({ @DynamoDbAttribute("filter[taxonomyNode.id]") }))
+    private StringAttribute taxonomyNodeIdFilter;
 
     @Getter(onMethod = @__({ @DynamoDbAttribute("page[size]") }))
     private IntegerAttribute pageSize;
+
+    private BooleanAttribute suggestNextEpisodeForCompleted;
 }

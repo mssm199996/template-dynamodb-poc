@@ -2,7 +2,6 @@ package template.template;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbAttribute;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmutable;
 import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbPartitionKey;
@@ -10,10 +9,10 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbSortK
 import template.attribute.base.BooleanAttribute;
 import template.attribute.base.StringAttribute;
 import template.attribute.document.autodata.AutodataAttribute;
+import template.attribute.document.component.Component;
 
 @Getter
 @Builder
-@ToString
 @DynamoDbImmutable(builder = CollectionTemplateVersion.CollectionTemplateVersionBuilder.class)
 public class CollectionTemplateVersion {
 
@@ -21,14 +20,17 @@ public class CollectionTemplateVersion {
     private String templateId;
 
     @Getter(onMethod = @__({ @DynamoDbSortKey, @DynamoDbAttribute("sortKey") }))
-    private String sortKey;
+    private Integer sortKey;
 
     private Integer revision;
     private Long createdAt, publishedAt;
-    private String modifiedBy;
+
+    @Getter(onMethod = @__({ @DynamoDbAttribute("meta") }))
+    private CollectionTemplateVersionMetadata metadata;
 
     private StringAttribute title, kind;
-    private BooleanAttribute broadcastTitle, shouldRefreshOnPageReappearance, async;
+    private BooleanAttribute async;
+    private Component component;
     private AutodataAttribute autodata;
 
     private CollectionTemplateVersionState state;
@@ -39,9 +41,10 @@ public class CollectionTemplateVersion {
     }
 
     @Override
-    public boolean equals(Object o){
-        if(!(o instanceof CollectionTemplateVersion))
+    public boolean equals(Object o) {
+        if (!(o instanceof CollectionTemplateVersion)) {
             return false;
+        }
 
         return this.templateId.equals(((CollectionTemplateVersion) o).getTemplateId()) && this.sortKey.equals(((CollectionTemplateVersion) o).getSortKey());
     }

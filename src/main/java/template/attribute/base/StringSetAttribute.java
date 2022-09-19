@@ -9,9 +9,7 @@ import software.amazon.awssdk.enhanced.dynamodb.mapper.annotations.DynamoDbImmut
 import template.attribute.Attribute;
 import template.rules.ui.GenericUIRules;
 import template.rules.validation.GenericValidationRules;
-import template.rules.validation.RangeValidationRules;
 
-import java.util.List;
 import java.util.Set;
 
 @Getter

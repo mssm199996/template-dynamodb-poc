@@ -60,7 +60,7 @@ public class DynamoDBClient {
         this.collectionTemplateVersionDynamoDbTable.putItem(entity);
     }
 
-    public CollectionTemplateVersion findByPartitionKeyAndSortKey(String partitionKey, String sortKey) {
+    public CollectionTemplateVersion findByPartitionKeyAndSortKey(String partitionKey, Integer sortKey) {
         return this.collectionTemplateVersionDynamoDbTable.getItem(Key.builder()
                 .partitionValue(partitionKey)
                 .sortValue(sortKey)
